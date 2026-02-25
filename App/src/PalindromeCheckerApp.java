@@ -1,54 +1,65 @@
-import java.util.Scanner;
+import java.util.*;
 
-class PalindromeService {
+interface PalindromeStrategy {
+    boolean isPalindrome(String input);
+}
 
-    public boolean checkPalindrome(String input) {
-        if (input == null || input.isEmpty()) {
-            return false;
-        }
+class StackStrategy implements PalindromeStrategy {
+    public boolean isPalindrome(String input) {
+        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        Stack<Character> stack = new Stack<>();
+        for (char c : clean.toCharArray()) stack.push(c);
 
-        String cleanStr = normalize(input);
-        return isBalanced(cleanStr);
+        StringBuilder reversed = new StringBuilder();
+        while (!stack.isEmpty()) reversed.append(stack.pop());
+
+        return clean.contentEquals(reversed);
     }
+}
 
-    private String normalize(String str) {
-        return str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-    }
+class DequeStrategy implements PalindromeStrategy {
+    public boolean isPalindrome(String input) {
+        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        Deque<Character> deque = new ArrayDeque<>();
+        for (char c : clean.toCharArray()) deque.addLast(c);
 
-    private boolean isBalanced(String str) {
-        int left = 0;
-        int right = str.length() - 1;
-
-        while (left < right) {
-            if (str.charAt(left) != str.charAt(right)) {
-                return false;
-            }
-            left++;
-            right--;
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) return false;
         }
         return true;
     }
 }
 
+class PalindromeContext {
+    private PalindromeStrategy strategy;
+
+    public void setStrategy(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeCheck(String text) {
+        return strategy.isPalindrome(text);
+    }
+}
+
 public class PalindromeCheckerApp {
-
-    private static final String APP_NAME = "Encapsulated Palindrome Pro";
-
-    public static void main(String[] args) {
-        PalindromeService service = new PalindromeService();
+    static void main(String[] args) {
+        PalindromeContext context = new PalindromeContext();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("=== " + APP_NAME + " ===");
+        System.out.println("Select Strategy: 1 (Stack) or 2 (Deque)");
+        String choice = scanner.nextLine();
 
-        while (true) {
-            System.out.print("Enter text (or 'exit'): ");
-            String input = scanner.nextLine();
-
-            if (input.equalsIgnoreCase("exit")) break;
-
-            boolean result = service.checkPalindrome(input);
-            System.out.println("Is Palindrome: " + result + "\n");
+        if (choice.equals("1")) {
+            context.setStrategy(new StackStrategy());
+        } else {
+            context.setStrategy(new DequeStrategy());
         }
+
+        System.out.print("Enter text: ");
+        String text = scanner.nextLine();
+        System.out.println("Result: " + context.executeCheck(text));
+
         scanner.close();
     }
 }
