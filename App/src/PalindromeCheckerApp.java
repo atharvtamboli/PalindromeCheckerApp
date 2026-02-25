@@ -2,8 +2,8 @@ import java.util.Scanner;
 
 public class PalindromeCheckerApp {
 
-    private static final String APP_NAME = "Recursive Palindrome Validator";
-    private static final String APP_VERSION = "8.0.0";
+    private static final String APP_NAME = "Normalization Palindrome App";
+    private static final String APP_VERSION = "9.0.0";
 
     public static void main(String[] args) {
         displayWelcomeMessage();
@@ -15,7 +15,7 @@ public class PalindromeCheckerApp {
         System.out.println("  Welcome to the " + APP_NAME);
         System.out.println("  Version: " + APP_VERSION);
         System.out.println("=====================================");
-        System.out.println("Using the Call Stack to validate palindromes.\n");
+        System.out.println("Ignoring case, spaces, and special characters.\n");
     }
 
     private static void startPalindromeChecker() {
@@ -27,28 +27,33 @@ public class PalindromeCheckerApp {
 
             if (userInput.equalsIgnoreCase("exit")) break;
 
-            String cleanInput = userInput.toLowerCase().replaceAll("[^a-z0-9]", "");
+            String normalized = normalizeString(userInput);
 
-            if (isPalindrome(cleanInput, 0, cleanInput.length() - 1)) {
-                System.out.println("Result: '" + userInput + "' is a palindrome.");
+            if (isPalindrome(normalized)) {
+                System.out.println("Result: It is a palindrome.");
             } else {
-                System.out.println("Result: '" + userInput + "' is NOT a palindrome.");
+                System.out.println("Result: It is NOT a palindrome.");
             }
             System.out.println();
         }
         scanner.close();
     }
 
-    private static boolean isPalindrome(String str, int start, int end) {
+    private static String normalizeString(String str) {
+        return str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+    }
 
-        if (start >= end) {
-            return true;
+    private static boolean isPalindrome(String str) {
+        int left = 0;
+        int right = str.length() - 1;
+
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
         }
-
-        if (str.charAt(start) != str.charAt(end)) {
-            return false;
-        }
-
-        return isPalindrome(str, start + 1, end - 1);
+        return true;
     }
 }
