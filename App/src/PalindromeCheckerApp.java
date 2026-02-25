@@ -1,12 +1,11 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Scanner;
-import java.util.Stack;
 
 public class PalindromeCheckerApp {
 
-    private static final String APP_NAME = "FIFO vs LIFO Palindrome App";
-    private static final String APP_VERSION = "5.0.0";
+    private static final String APP_NAME = "Deque Palindrome Logic";
+    private static final String APP_VERSION = "6.0.0";
 
     public static void main(String[] args) {
         displayWelcomeMessage();
@@ -18,7 +17,7 @@ public class PalindromeCheckerApp {
         System.out.println("  Welcome to the " + APP_NAME);
         System.out.println("  Version: " + APP_VERSION);
         System.out.println("=====================================");
-        System.out.println("Comparing Queue (FIFO) and Stack (LIFO) behavior.\n");
+        System.out.println("Using Double-Ended Queue for Front/Rear comparison.\n");
     }
 
     private static void startPalindromeChecker() {
@@ -29,7 +28,7 @@ public class PalindromeCheckerApp {
             String userInput = scanner.nextLine();
 
             if (userInput.equalsIgnoreCase("exit")) {
-                System.out.println("Shutting down. Goodbye!");
+                System.out.println("Shutting down Deque App. Goodbye!");
                 break;
             }
 
@@ -44,19 +43,18 @@ public class PalindromeCheckerApp {
     }
 
     private static boolean isPalindrome(String str) {
-        Queue<Character> queue = new LinkedList<>();
-        Stack<Character> stack = new Stack<>();
-
+        Deque<Character> deque = new ArrayDeque<>();
         String cleanStr = str.toLowerCase();
 
         for (int i = 0; i < cleanStr.length(); i++) {
-            char c = cleanStr.charAt(i);
-            queue.add(c);
-            stack.push(c);
+            deque.addLast(cleanStr.charAt(i));
         }
 
-        while (!queue.isEmpty()) {
-            if (!queue.remove().equals(stack.pop())) {
+        while (deque.size() > 1) {
+            Character first = deque.removeFirst();
+            Character last = deque.removeLast();
+
+            if (!first.equals(last)) {
                 return false;
             }
         }
