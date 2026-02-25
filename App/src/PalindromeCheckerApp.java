@@ -1,65 +1,51 @@
 import java.util.*;
 
-interface PalindromeStrategy {
-    boolean isPalindrome(String input);
-}
-
-class StackStrategy implements PalindromeStrategy {
-    public boolean isPalindrome(String input) {
-        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-        Stack<Character> stack = new Stack<>();
-        for (char c : clean.toCharArray()) stack.push(c);
-
-        StringBuilder reversed = new StringBuilder();
-        while (!stack.isEmpty()) reversed.append(stack.pop());
-
-        return clean.contentEquals(reversed);
-    }
-}
-
-class DequeStrategy implements PalindromeStrategy {
-    public boolean isPalindrome(String input) {
-        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-        Deque<Character> deque = new ArrayDeque<>();
-        for (char c : clean.toCharArray()) deque.addLast(c);
-
-        while (deque.size() > 1) {
-            if (!deque.removeFirst().equals(deque.removeLast())) return false;
-        }
-        return true;
-    }
-}
-
-class PalindromeContext {
-    private PalindromeStrategy strategy;
-
-    public void setStrategy(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean executeCheck(String text) {
-        return strategy.isPalindrome(text);
-    }
-}
-
 public class PalindromeCheckerApp {
-    static void main(String[] args) {
-        PalindromeContext context = new PalindromeContext();
-        Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Select Strategy: 1 (Stack) or 2 (Deque)");
-        String choice = scanner.nextLine();
+    public static void main(String[] args) {
+        String longInput = "racecar".repeat(1000); // Create a large string for a fair test
 
-        if (choice.equals("1")) {
-            context.setStrategy(new StackStrategy());
-        } else {
-            context.setStrategy(new DequeStrategy());
-        }
+        System.out.println("Benchmarking Palindrome Algorithms (Input Size: " + longInput.length() + " chars)");
+        System.out.println("--------------------------------------------------");
 
-        System.out.print("Enter text: ");
-        String text = scanner.nextLine();
-        System.out.println("Result: " + context.executeCheck(text));
+        benchmark("For-Loop Concatenation", () -> {
+            StringBuilder reversed = new StringBuilder();
+            for (int i = longInput.length() - 1; i >= 0; i--) {
+                reversed.append(longInput.charAt(i));
+            }
+            return longInput.equalsIgnoreCase(reversed.toString());
+        });
 
-        scanner.close();
+        benchmark("StringBuilder Reverse", () -> {
+            String reversed = new StringBuilder(longInput).reverse().toString();
+            return longInput.equalsIgnoreCase(reversed);
+        });
+
+        benchmark("Two-Pointer (Char Array)", () -> {
+            char[] chars = longInput.toCharArray();
+            int left = 0, right = chars.length - 1;
+            while (left < right) {
+                if (chars[left++] != chars[right--]) return false;
+            }
+            return true;
+        });
+
+        benchmark("Deque (ArrayDeque)", () -> {
+            Deque<Character> deque = new ArrayDeque<>();
+            for (char c : longInput.toCharArray()) deque.addLast(c);
+            while (deque.size() > 1) {
+                if (!deque.removeFirst().equals(deque.removeLast())) return false;
+            }
+            return true;
+        });
+    }
+
+    private static void benchmark(String name, java.util.function.Supplier<Boolean> algorithm) {
+        long startTime = System.nanoTime();
+        algorithm.get();
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);
+        System.out.printf("%-25s : %d ns\n", name, duration);
     }
 }
