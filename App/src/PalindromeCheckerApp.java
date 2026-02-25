@@ -2,62 +2,56 @@ import java.util.Scanner;
 
 public class PalindromeCheckerApp {
 
-    private static final String APP_NAME = "PalindromeChecker Pro";
-    private static final String APP_VERSION = "1.0.0";
+    private static final String APP_NAME = "Palindrome Loop Explorer";
+    private static final String APP_VERSION = "2.0.0";
 
     public static void main(String[] args) {
         displayWelcomeMessage();
-        runApplicationLoop();
+        startPalindromeChecker();
     }
 
     private static void displayWelcomeMessage() {
         System.out.println("=====================================");
-        System.out.println("  Welcome to " + APP_NAME);
+        System.out.println("  Welcome to the " + APP_NAME);
         System.out.println("  Version: " + APP_VERSION);
         System.out.println("=====================================");
-        System.out.println("Type 'exit' to quit.\n");
+        System.out.println("This version uses String Concatenation logic.\n");
     }
 
-    private static void runApplicationLoop() {
+    private static void startPalindromeChecker() {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("Enter text to check: ");
-            String input = scanner.nextLine().trim();
+            System.out.print("Enter a string (or 'exit'): ");
+            String userInput = scanner.nextLine();
 
-            if (input.equalsIgnoreCase("exit")) {
-                System.out.println("Closing application. Happy coding!");
+            if (userInput.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting. Goodbye!");
                 break;
             }
 
-            if (input.isEmpty()) {
-                System.out.println("Error: Input cannot be empty.");
-                continue;
-            }
+            String reversed = reverseString(userInput);
 
-            if (isPalindrome(input)) {
-                System.out.println("Result: '" + input + "' is a palindrome.");
+            System.out.println("Original: " + userInput);
+            System.out.println("Reversed: " + reversed);
+
+            if (userInput.equalsIgnoreCase(reversed)) {
+                System.out.println("Result: It is a palindrome!");
             } else {
-                System.out.println("Result: '" + input + "' is NOT a palindrome.");
+                System.out.println("Result: It is NOT a palindrome.");
             }
-            System.out.println("-------------------------------------");
+            System.out.println();
         }
         scanner.close();
     }
 
-    private static boolean isPalindrome(String str) {
-        String clean = str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+    private static String reverseString(String str) {
+        String reversed = "";
 
-        int left = 0;
-        int right = clean.length() - 1;
-
-        while (left < right) {
-            if (clean.charAt(left) != clean.charAt(right)) {
-                return false;
-            }
-            left++;
-            right--;
+        for (int i = str.length() - 1; i >= 0; i--) {
+            reversed = reversed + str.charAt(i);
         }
-        return true;
+
+        return reversed;
     }
 }
