@@ -1,11 +1,19 @@
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Scanner;
+
+class Node {
+    char data;
+    Node next;
+
+    Node(char data) {
+        this.data = data;
+        this.next = null;
+    }
+}
 
 public class PalindromeCheckerApp {
 
-    private static final String APP_NAME = "Deque Palindrome Logic";
-    private static final String APP_VERSION = "6.0.0";
+    private static final String APP_NAME = "Linked List Palindrome Pro";
+    private static final String APP_VERSION = "7.0.0";
 
     public static void main(String[] args) {
         displayWelcomeMessage();
@@ -17,7 +25,7 @@ public class PalindromeCheckerApp {
         System.out.println("  Welcome to the " + APP_NAME);
         System.out.println("  Version: " + APP_VERSION);
         System.out.println("=====================================");
-        System.out.println("Using Double-Ended Queue for Front/Rear comparison.\n");
+        System.out.println("Finding the middle and reversing the second half.\n");
     }
 
     private static void startPalindromeChecker() {
@@ -27,38 +35,61 @@ public class PalindromeCheckerApp {
             System.out.print("Enter a string (or 'exit'): ");
             String userInput = scanner.nextLine();
 
-            if (userInput.equalsIgnoreCase("exit")) {
-                System.out.println("Shutting down Deque App. Goodbye!");
-                break;
-            }
+            if (userInput.equalsIgnoreCase("exit")) break;
 
-            if (isPalindrome(userInput)) {
-                System.out.println("Result: '" + userInput + "' is a palindrome.");
+            Node head = convertToLinkedList(userInput.toLowerCase());
+
+            if (isPalindrome(head)) {
+                System.out.println("Result: It is a palindrome.");
             } else {
-                System.out.println("Result: '" + userInput + "' is NOT a palindrome.");
+                System.out.println("Result: It is NOT a palindrome.");
             }
-            System.out.println();
         }
         scanner.close();
     }
 
-    private static boolean isPalindrome(String str) {
-        Deque<Character> deque = new ArrayDeque<>();
-        String cleanStr = str.toLowerCase();
+    private static Node convertToLinkedList(String str) {
+        if (str.isEmpty()) return null;
+        Node head = new Node(str.charAt(0));
+        Node current = head;
+        for (int i = 1; i < str.length(); i++) {
+            current.next = new Node(str.charAt(i));
+            current = current.next;
+        }
+        return head;
+    }
 
-        for (int i = 0; i < cleanStr.length(); i++) {
-            deque.addLast(cleanStr.charAt(i));
+    private static boolean isPalindrome(Node head) {
+        if (head == null || head.next == null) return true;
+
+        Node slow = head;
+        Node fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
         }
 
-        while (deque.size() > 1) {
-            Character first = deque.removeFirst();
-            Character last = deque.removeLast();
+        Node secondHalf = reverseList(slow);
+        Node firstHalf = head;
 
-            if (!first.equals(last)) {
-                return false;
-            }
+        Node temp = secondHalf;
+        while (temp != null) {
+            if (firstHalf.data != temp.data) return false;
+            firstHalf = firstHalf.next;
+            temp = temp.next;
         }
-
         return true;
+    }
+
+    private static Node reverseList(Node head) {
+        Node prev = null;
+        Node current = head;
+        while (current != null) {
+            Node nextNode = current.next;
+            current.next = prev;
+            prev = current;
+            current = nextNode;
+        }
+        return prev;
     }
 }
