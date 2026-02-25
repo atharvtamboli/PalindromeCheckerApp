@@ -2,8 +2,8 @@ import java.util.Scanner;
 
 public class PalindromeCheckerApp {
 
-    private static final String APP_NAME = "Palindrome Loop Explorer";
-    private static final String APP_VERSION = "2.0.0";
+    private static final String APP_NAME = "Palindrome Array Pro";
+    private static final String APP_VERSION = "3.0.0";
 
     public static void main(String[] args) {
         displayWelcomeMessage();
@@ -15,7 +15,7 @@ public class PalindromeCheckerApp {
         System.out.println("  Welcome to the " + APP_NAME);
         System.out.println("  Version: " + APP_VERSION);
         System.out.println("=====================================");
-        System.out.println("This version uses String Concatenation logic.\n");
+        System.out.println("Efficiently checking palindromes using char[] pointers.\n");
     }
 
     private static void startPalindromeChecker() {
@@ -26,32 +26,35 @@ public class PalindromeCheckerApp {
             String userInput = scanner.nextLine();
 
             if (userInput.equalsIgnoreCase("exit")) {
-                System.out.println("Exiting. Goodbye!");
+                System.out.println("System shutdown. Goodbye!");
                 break;
             }
 
-            String reversed = reverseString(userInput);
+            char[] charArray = userInput.toLowerCase().toCharArray();
 
-            System.out.println("Original: " + userInput);
-            System.out.println("Reversed: " + reversed);
-
-            if (userInput.equalsIgnoreCase(reversed)) {
-                System.out.println("Result: It is a palindrome!");
+            if (isPalindrome(charArray)) {
+                System.out.println("Result: '" + userInput + "' is a palindrome.");
             } else {
-                System.out.println("Result: It is NOT a palindrome.");
+                System.out.println("Result: '" + userInput + "' is NOT a palindrome.");
             }
             System.out.println();
         }
         scanner.close();
     }
 
-    private static String reverseString(String str) {
-        String reversed = "";
+    private static boolean isPalindrome(char[] chars) {
+        int left = 0;
+        int right = chars.length - 1;
 
-        for (int i = str.length() - 1; i >= 0; i--) {
-            reversed = reversed + str.charAt(i);
+        while (left < right) {
+            if (chars[left] != chars[right]) {
+                return false;
+            }
+
+            left++;
+            right--;
         }
 
-        return reversed;
+        return true;
     }
 }
